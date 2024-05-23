@@ -1,0 +1,33 @@
+[gd_scene load_steps=6 format=3 uid="uid://dvpucqod3h4eu"]
+
+[ext_resource type="Texture2D" uid="uid://dqr4i0fxmvk35" path="res://CardImages/bgTableTwo.png" id="1_8n0mk"]
+[ext_resource type="Script" path="res://Playing/playing.gd" id="1_d82s0"]
+[ext_resource type="PackedScene" uid="uid://c6jjwbvxya6kn" path="res://card_container.tscn" id="2_m4mhy"]
+[ext_resource type="PackedScene" uid="uid://ewsi4mjt7glj" path="res://ScoreKeeper.tscn" id="4_7wy6g"]
+[ext_resource type="PackedScene" uid="uid://c61e0lq7rt214" path="res://MakeTrumpPhase1.tscn" id="5_rv6tj"]
+
+[node name="Node2D" type="Node2D"]
+script = ExtResource("1_d82s0")
+card_scene = ExtResource("2_m4mhy")
+
+[node name="ParallaxBackground" type="ParallaxBackground" parent="."]
+
+[node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxBackground"]
+
+[node name="BgTableTwo" type="Sprite2D" parent="."]
+position = Vector2(599, 329)
+scale = Vector2(1.27637, 1)
+texture = ExtResource("1_8n0mk")
+metadata/_edit_lock_ = true
+
+[node name="ScoreEnemy" parent="." instance=ExtResource("4_7wy6g")]
+position = Vector2(74, 67)
+
+[node name="ScoreGoodGuys" parent="." instance=ExtResource("4_7wy6g")]
+position = Vector2(888, 569)
+
+[node name="Control" parent="." instance=ExtResource("5_rv6tj")]
+offset_left = 578.0
+offset_top = 388.0
+offset_right = 578.0
+offset_bottom = 388.0

@@ -1,0 +1,25 @@
+[gd_scene load_steps=3 format=3 uid="uid://ta3ui61s23cb"]
+
+[ext_resource type="Script" path="res://main.gd" id="1_mi8j8"]
+[ext_resource type="Texture2D" uid="uid://dqr4i0fxmvk35" path="res://CardImages/bgTableTwo.png" id="1_o3qed"]
+
+[node name="Node2D" type="Node2D"]
+script = ExtResource("1_mi8j8")
+
+[node name="ParallaxBackground" type="ParallaxBackground" parent="."]
+
+[node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxBackground"]
+
+[node name="BgTableTwo" type="Sprite2D" parent="."]
+position = Vector2(599, 329)
+scale = Vector2(1.27637, 1)
+texture = ExtResource("1_o3qed")
+
+[node name="play" type="Button" parent="BgTableTwo"]
+offset_left = -87.749
+offset_top = -153.0
+offset_right = 83.251
+offset_bottom = -89.0
+text = "Play"
+
+[connection signal="pressed" from="BgTableTwo/play" to="." method="_on_play_pressed"]

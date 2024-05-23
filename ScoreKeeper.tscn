@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://ewsi4mjt7glj"]
+
+[ext_resource type="Script" path="res://ScoreKeeper.gd" id="1_48jmy"]
+[ext_resource type="PackedScene" uid="uid://c6jjwbvxya6kn" path="res://card_container.tscn" id="2_23g80"]
+
+[node name="ScoreKeeper" type="Node2D"]
+position = Vector2(142, 159)
+script = ExtResource("1_48jmy")
+card_scene = ExtResource("2_23g80")
+
+[node name="ScoreTick" type="Timer" parent="."]
+autostart = true
+
+[connection signal="timeout" from="ScoreTick" to="." method="_on_score_tick_timeout"]
