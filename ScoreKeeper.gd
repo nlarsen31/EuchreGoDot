@@ -38,14 +38,15 @@ func _process(delta):
 
 
 func _on_score_tick_timeout():
-	_score = (_score + 1) % 10
-	
-	# Set Position of the 4
-	if pointPoistions[_score][0] == 1:
-		_card4.setCardSprite("4_hearts")
-	else:
-		_card4.setCardSprite("card_back")
-	
-	
-	_card4.position = Vector2(pointPoistions[_score][1], pointPoistions[_score][2])
-	_card4.rotation = pointPoistions[_score][3]
+	pass
+	#_score = (_score + 1) % 10
+	#
+	## Set Position of the 4
+	#if pointPoistions[_score][0] == 1:
+		#_card4.setCardSprite("4_hearts")
+	#else:
+		#_card4.setCardSprite("card_back")
+	#
+	#
+	#_card4.position = Vector2(pointPoistions[_score][1], pointPoistions[_score][2])
+	#_card4.rotation = pointPoistions[_score][3]

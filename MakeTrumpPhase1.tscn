@@ -1,6 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://c61e0lq7rt214"]
+[gd_scene load_steps=7 format=3 uid="uid://c61e0lq7rt214"]
 
 [ext_resource type="Texture2D" uid="uid://cjfm0akq2y5g7" path="res://CardImages/DealerDown.drawio.png" id="1_m2yoa"]
+[ext_resource type="Script" path="res://MakeTrumpPhase1.gd" id="1_rl7lb"]
 [ext_resource type="Texture2D" uid="uid://bb5hpkeigcu37" path="res://CardImages/DealerLeft.drawio.png" id="2_emtgt"]
 [ext_resource type="Texture2D" uid="uid://coue2iqm683db" path="res://CardImages/DealerRight.drawio.png" id="3_qwpka"]
 [ext_resource type="Texture2D" uid="uid://liq6ndo7h304" path="res://CardImages/DealerUp.drawio.png" id="4_ihiug"]
@@ -17,7 +18,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("2_emtgt")
+"texture": ExtResource("3_qwpka")
 }],
 "loop": true,
 "name": &"left",
@@ -25,7 +26,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("3_qwpka")
+"texture": ExtResource("2_emtgt")
 }],
 "loop": true,
 "name": &"right",
@@ -40,13 +41,14 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="Control" type="Control"]
+[node name="MakeTrumpPhase1" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_rl7lb")
 
 [node name="Order UP" type="Button" parent="."]
 layout_mode = 0
@@ -72,3 +74,6 @@ position = Vector2(1, 78)
 scale = Vector2(0.64779, 0.595679)
 sprite_frames = SubResource("SpriteFrames_h6jt1")
 animation = &"right"
+
+[connection signal="pressed" from="Order UP" to="." method="_on_order_up_pressed"]
+[connection signal="pressed" from="Pass" to="." method="_on_pass_pressed"]

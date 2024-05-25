@@ -38,6 +38,8 @@ const Enums = preload(\"res://CommonScripts/enums.gd\")
 @export var suit = Enums.Suits.CLUBS
 @export var rank = Enums.Ranks.ACE
 
+signal discard
+
 var _suits = [\"spades\", \"clubs\", \"hearts\", \"diamonds\"] # Same order as enum
 var _ranks = [\"9\", \"10\", \"j\", \"q\", \"k\", \"a\"]
 # Set the animation based on the suit and rank vars.
@@ -54,6 +56,8 @@ func setCardSprite(animationName):
 func printCard():
 	var anim = _ranks[rank] + \"_\" + _suits[suit]
 	print(anim)
+func toString():
+	return _ranks[rank] + \"_\" + _suits[suit]
 	
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -64,7 +68,6 @@ func _ready():
 func _process(delta):
 	pass
 
-
 func _on_mouse_entered():
 	print(\"Entered\")
 
@@ -72,7 +75,7 @@ func _on_mouse_entered():
 func _on_input_event(viewport, event, shape_idx):
 	if event is InputEventMouseButton:
 		if event.button_index == 1 and event.is_pressed():
-			print(\"clicked\")
+			discard.emit(self)
 		elif event.button_index == 1 and not event.is_pressed():
 			print(\"unclicked\")
 "

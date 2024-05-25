@@ -26,8 +26,19 @@ position = Vector2(74, 67)
 [node name="ScoreGoodGuys" parent="." instance=ExtResource("4_7wy6g")]
 position = Vector2(888, 569)
 
-[node name="Control" parent="." instance=ExtResource("5_rv6tj")]
+[node name="MakeTrumpPhase1" parent="." instance=ExtResource("5_rv6tj")]
 offset_left = 578.0
 offset_top = 388.0
 offset_right = 578.0
 offset_bottom = 388.0
+
+[node name="HintLabel" type="Label" parent="."]
+visible = false
+offset_left = 493.0
+offset_top = 468.0
+offset_right = 659.0
+offset_bottom = 491.0
+text = "Pick a card to Discard"
+
+[connection signal="OrderUp" from="MakeTrumpPhase1" to="." method="_order_up_signal"]
+[connection signal="Pass" from="MakeTrumpPhase1" to="." method="_pass_signal"]

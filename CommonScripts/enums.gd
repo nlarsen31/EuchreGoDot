@@ -21,3 +21,15 @@ enum RanksTrump {
 	ACE,
 	JACK,
 }
+enum Players {
+	Right,
+	Player,
+	Left,
+	Partner
+}
+enum GameState { # Current state of the game
+	FaceUpPickTrump,
+	FaceDownPickTrump,
+	Discard,
+	Playing
+}
