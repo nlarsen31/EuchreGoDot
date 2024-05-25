@@ -1,0 +1,56 @@
+[gd_scene load_steps=3 format=3 uid="uid://1hxufhkkq5me"]
+
+[ext_resource type="Script" path="res://Playing/MakeTrumpPhase2.gd" id="1_irue7"]
+[ext_resource type="PackedScene" uid="uid://xbr48vwxhoga" path="res://Playing/dealerIndicator.tscn" id="1_m5iam"]
+
+[node name="MakeTrumpPhase2" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_irue7")
+
+[node name="DealerIndicator" parent="." instance=ExtResource("1_m5iam")]
+position = Vector2(0, 41)
+
+[node name="Spades" type="Button" parent="."]
+layout_mode = 0
+offset_right = 87.0
+offset_bottom = 31.0
+text = "Spades"
+
+[node name="Hearts" type="Button" parent="."]
+layout_mode = 0
+offset_top = 31.0
+offset_right = 87.0
+offset_bottom = 62.0
+text = "Hearts"
+
+[node name="Diamonds" type="Button" parent="."]
+layout_mode = 0
+offset_left = -87.0
+offset_top = 31.0
+offset_bottom = 62.0
+text = "Diamonds"
+
+[node name="Clubs" type="Button" parent="."]
+layout_mode = 0
+offset_left = -87.0
+offset_bottom = 31.0
+text = "Clubs"
+
+[node name="Pass" type="Button" parent="."]
+layout_mode = 0
+offset_left = -41.0
+offset_top = 62.0
+offset_right = 46.0
+offset_bottom = 93.0
+text = "Pass"
+
+[connection signal="pressed" from="Spades" to="." method="_on_spades_pressed"]
+[connection signal="pressed" from="Hearts" to="." method="_on_hearts_pressed"]
+[connection signal="pressed" from="Diamonds" to="." method="_on_diamonds_pressed"]
+[connection signal="pressed" from="Clubs" to="." method="_on_clubs_pressed"]
+[connection signal="pressed" from="Pass" to="." method="_on_pass_pressed"]
