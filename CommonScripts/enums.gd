@@ -1,3 +1,4 @@
+const TO_STR_SUITS = ["spades", "clubs", "hearts", "diamonds"] # Same order as enum
 enum Suits {
 	SPADES,
 	CLUBS,
@@ -21,6 +22,7 @@ enum RanksTrump {
 	ACE,
 	JACK,
 }
+const Players_toString = ["right", "player", "left", "partner"]
 enum Players {
 	Right,
 	Player,

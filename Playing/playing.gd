@@ -52,17 +52,21 @@ var deck = [] # Deck of all cards in game detailed positons in _build_deal
 
 # Game State Objects.
 var game_state = Enums.GameState.FaceUpPickTrump
-#var playerOrder = [ # List of players starting with right of dealer
-	#Enums.Players.Right, # Right of dealer
-	#Enums.Players.Partner, # Second to make trump
-	#Enums.Players.Left, # third to make trump
-	#Enums.Players.Player] # Dealer
 var playerOrder = [ # List of players starting with right of dealer
-	Enums.Players.Partner, # Right of dealer
-	Enums.Players.Left, # Second to make trump
-	Enums.Players.Player, # third to make trump
-	Enums.Players.Right] # Dealer
-
+	Enums.Players.Right, # Right of dealer
+	Enums.Players.Partner, # Second to make trump
+	Enums.Players.Left, # third to make trump
+	Enums.Players.Player] # Dealer
+#var playerOrder = [ # List of players starting with right of dealer
+	#Enums.Players.Player, # Right of dealer
+	#Enums.Players.Right, # Second to make trump
+	#Enums.Players.Partner, # third to make trump
+	#Enums.Players.Left] # Dealer
+#var playerOrder = [ # List of players starting with right of dealer
+	#Enums.Players.Partner, # Right of dealer
+	#Enums.Players.Left, # Second to make trump
+	#Enums.Players.Player, # third to make trump
+	#Enums.Players.Right] # Dealer
 var callingPlayer = -1
 var Trump = Enums.Suits.SPADES
 
@@ -135,13 +139,16 @@ func _build_deal():
 
 func _pick_random_choice(force = false):
 	var options = []
+	var isDealer = callingPlayer == playerOrder[3]
 	if game_state == Enums.GameState.FaceUpPickTrump:
 		options = ["pass", "pickItUp"] # TODO Change to Enum
 	if game_state == Enums.GameState.FaceDownPickTrump:
-		options = ["spades", "hearts", "clubs", "diamonds", "pass"]
+		options = ["spades", "hearts", "clubs", "diamonds"]
+		if not isDealer:
+			options.append_array(["pass","pass","pass","pass","pass","pass","pass","pass"])
 	
 	options.shuffle()
-	if force:
+	if force and (not isDealer):
 		options[0] = "pass"
 	print("Player picked " + options[0])
 	return options[0]
@@ -164,24 +171,31 @@ func _simulate_to_player(start_idx):
 			if idx == 3: # dealer has chose to pass
 				print("dealer passed")
 				_start_face_down_bidding()
-				
-				
 	elif game_state == Enums.GameState.FaceDownPickTrump:
 		for i in range(start_idx, 4):
 			# End when we get to player
+			callingPlayer = playerOrder[i]
 			if playerOrder[i] == Enums.Players.Player:
-				callingPlayer = playerOrder[i]
 				return
-			var choice = _pick_random_choice()
+			var choice = _pick_random_choice(true)
 			if choice == "spades":
-				print("chose spades")
+				$HintLabel.text = Enums.Players_toString[callingPlayer] +  " chose spades"
+				_start_playing()
+				return
 			elif choice == "clubs":
-				print("chose clubs")
+				$HintLabel.text = Enums.Players_toString[callingPlayer] +  " chose clubs"
+				_start_playing()
+				return
 			elif choice == "hearts":
-				print("chose hearts")
+				$HintLabel.text = Enums.Players_toString[callingPlayer] +  " chose hearts"
+				_start_playing()
+				return
 			elif choice == "diamonds":
-				print("chose diamonds")
-			
+				$HintLabel.text = Enums.Players_toString[callingPlayer] +  " chose diamonds"
+				_start_playing()
+				return
+	elif game_state == Enums.GameState.Playing:
+		print("Simulate playing to player")
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
@@ -193,13 +207,25 @@ func _swap_deck_cards(i, j):
 	deck[j] = tmp
 func _start_face_down_bidding():
 	game_state = Enums.GameState.FaceDownPickTrump
+	var kitty_trump = deck[KITTY_IDX].suit
+	$MakeTrumpPhase2.disable_suit(kitty_trump)
 	deck[KITTY_IDX].flipDownCard()
 	deck[KITTY_IDX].position = Vector2(1000,1000)
 	$MakeTrumpPhase2.set_dealer(playerOrder[3])
 	_simulate_to_player(0)
-	$MakeTrumpPhase1.visible = false
-	$MakeTrumpPhase2.visible = true
+	if game_state == Enums.GameState.FaceDownPickTrump:
+		$MakeTrumpPhase1.visible = false
+		$MakeTrumpPhase2.visible = true
+		var isPlayerDealer = playerOrder[3] == Enums.Players.Player
+		if isPlayerDealer:
+			$MakeTrumpPhase2/Pass.disabled = true
 
+func _start_playing():
+	$HintLabel.visible = true
+	game_state = Enums.GameState.Playing
+	$MakeTrumpPhase1.visible = false
+	$MakeTrumpPhase2.visible = false
+	
 # Phase 1 signals
 func _order_up_signal():
 	Trump = deck[KITTY_IDX].suit
@@ -229,11 +255,9 @@ func _order_up_signal():
 	
 	
 	$HintLabel.visible = true
-
 func _pick_suit(suit):
 	Trump = suit
 	_simulate_to_player(0)
-
 func _pass_signal():
 	print("_pass_siganl")
 	# get player index
@@ -244,21 +268,24 @@ func _pass_signal():
 		_simulate_to_player((idx + 1) % 4)
 
 # phase 2 signals
+func phase2_make_trump(suit):
+	Trump = suit
+	game_state = Enums.GameState.Playing
+	$HintLabel.text = "Player made " + Enums.TO_STR_SUITS[suit]
+	$HintLabel.visible = true
+	$MakeTrumpPhase2.visible = false
+	_simulate_to_player(0)
 func _spades_signal():
-	Trump = Enums.Suits.SPADES
-	_simulate_to_player(0)
+	phase2_make_trump(Enums.Suits.SPADES)
 func _hearts_signal():
-	Trump = Enums.Suits.HEARTS
-	_simulate_to_player(0)
+	phase2_make_trump(Enums.Suits.HEARTS)
 func _diamonds_signal():
-	Trump = Enums.Suits.DIAMONDS
-	_simulate_to_player(0)
+	phase2_make_trump(Enums.Suits.DIAMONDS)
 func _clubs_signal():
-	Trump = Enums.Suits.CLUBS
-	_simulate_to_player(0)
+	phase2_make_trump(Enums.Suits.CLUBS)
 func _pass2_signal():
-	_simulate_to_player(0)
-
+	var callingPlayerIdx = playerOrder.find(callingPlayer)
+	_simulate_to_player(callingPlayerIdx + 1)
 func _discard_signal(card):
 	# disconnect signals to players cards
 	for i in range(5): # Players hand
@@ -273,4 +300,6 @@ func _discard_signal(card):
 	deck[found].position = Vector2(1000,1000)
 	_swap_deck_cards(found, KITTY_IDX)
 	_deal_player_cards()
+
+# Playing signals
 
