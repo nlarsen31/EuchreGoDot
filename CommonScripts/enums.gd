@@ -17,21 +17,35 @@ enum Ranks {
 enum RanksTrump {
 	NINE,
 	TEN,
+	JACK,
 	QUEEN,
 	KING,
 	ACE,
-	JACK,
 }
-const Players_toString = ["right", "player", "left", "partner"]
-enum Players {
+const Players_toString = ["right", "partner", "left", "player"]
+enum PLAYERS {
 	Right,
-	Player,
+	Partner,
 	Left,
-	Partner
+	Player
 }
-enum GameState { # Current state of the game
-	FaceUpPickTrump,
-	FaceDownPickTrump,
+enum PHASES { # Current state of the game
+	BID_UP,
+	BID_DOWN,
 	Discard,
-	Playing
+	PLAYING
+}
+
+const BID_UP_OPTIONS_STR = ["PICK_IT_UP", "PASS"]
+enum BID_UP_OPTIONS {
+	PICK_IT_UP,
+	PASS
+}
+const BID_DOWN_OPTIONS_STR = ["PASS", "SPADES", "CLUBS", "HEARTS", "DIAMONDS"]
+enum BID_DOWN_OPTIONS {
+	PASS,
+	SPADES,
+	CLUBS,
+	HEARTS,
+	DIAMONDS
 }

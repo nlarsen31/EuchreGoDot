@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://ci4lgflduc3hq"]
+
+[ext_resource type="Script" path="res://PlayingBetter.gd" id="1_ytmw1"]
+[ext_resource type="PackedScene" uid="uid://c6jjwbvxya6kn" path="res://card_container.tscn" id="2_fyyye"]
+
+[node name="PlayingBetter" type="Node2D"]
+script = ExtResource("1_ytmw1")
+card_scene = ExtResource("2_fyyye")
+
+[node name="Timer" type="Timer" parent="."]
+one_shot = true

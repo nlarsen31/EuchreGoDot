@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bb5hpkeigcu37"
-path="res://.godot/imported/DealerLeft.drawio.png-5fdfe2038fb9648a0048fbba26414437.ctex"
+uid="uid://uqg6ieiohfv4"
+path="res://.godot/imported/9_clubs.png-ed6394bec05223375e180032bd69d269.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://CardImages/DealerLeft.drawio.png"
-dest_files=["res://.godot/imported/DealerLeft.drawio.png-5fdfe2038fb9648a0048fbba26414437.ctex"]
+source_file="res://CardImages2/9_clubs.png"
+dest_files=["res://.godot/imported/9_clubs.png-ed6394bec05223375e180032bd69d269.ctex"]
 
 [params]
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://coue2iqm683db"
-path="res://.godot/imported/DealerRight.drawio.png-2cc9313bdc48b8442a8d1b7aa5c260ee.ctex"
+uid="uid://bxt82l04gvysx"
+path="res://.godot/imported/q_hearts.png-693b1a49b4351f4c1c10f2f6646b6091.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://CardImages/DealerRight.drawio.png"
-dest_files=["res://.godot/imported/DealerRight.drawio.png-2cc9313bdc48b8442a8d1b7aa5c260ee.ctex"]
+source_file="res://CardImages2/q_hearts.png"
+dest_files=["res://.godot/imported/q_hearts.png-693b1a49b4351f4c1c10f2f6646b6091.ctex"]
 
 [params]
 

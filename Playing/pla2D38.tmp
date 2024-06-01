@@ -48,24 +48,6 @@ offset_top = 296.0
 offset_right = 573.0
 offset_bottom = 296.0
 
-[node name="YourTricks" type="Label" parent="."]
-offset_left = 4.0
-offset_top = 599.0
-offset_right = 95.0
-offset_bottom = 622.0
-text = "Your Tricks:"
-
-[node name="TheirTricks" type="Label" parent="."]
-offset_left = 2.0
-offset_top = 621.0
-offset_right = 96.0
-offset_bottom = 644.0
-text = "Their Tricks:"
-
-[node name="FiveSecondTimer" type="Timer" parent="."]
-wait_time = 3.0
-one_shot = true
-
 [connection signal="OrderUp" from="MakeTrumpPhase1" to="." method="_order_up_signal"]
 [connection signal="Pass" from="MakeTrumpPhase1" to="." method="_pass_signal"]
 [connection signal="clubs_signal" from="MakeTrumpPhase2" to="." method="_clubs_signal"]
@@ -73,4 +55,3 @@ one_shot = true
 [connection signal="hearts_signal" from="MakeTrumpPhase2" to="." method="_hearts_signal"]
 [connection signal="pass_signal" from="MakeTrumpPhase2" to="." method="_pass2_signal"]
 [connection signal="spades_signal" from="MakeTrumpPhase2" to="." method="_spades_signal"]
-[connection signal="timeout" from="FiveSecondTimer" to="." method="_on_five_second_timer_timeout"]

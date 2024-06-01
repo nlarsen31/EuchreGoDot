@@ -39,6 +39,8 @@ const Enums = preload(\"res://CommonScripts/enums.gd\")
 @export var rank = Enums.Ranks.ACE
 
 signal discard
+signal play
+signal select_card
 
 var _suits = [\"spades\", \"clubs\", \"hearts\", \"diamonds\"] # Same order as enum
 var _ranks = [\"9\", \"10\", \"j\", \"q\", \"k\", \"a\"]
@@ -58,24 +60,25 @@ func printCard():
 	print(anim)
 func toString():
 	return _ranks[rank] + \"_\" + _suits[suit]
+func _to_string():
+	return _ranks[rank] + \"_\" + _suits[suit]
 	
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass # Replace with function body.
-
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	pass
 
 func _on_mouse_entered():
-	print(\"Entered\")
+	pass
 
 
 func _on_input_event(viewport, event, shape_idx):
 	if event is InputEventMouseButton:
 		if event.button_index == 1 and event.is_pressed():
-			discard.emit(self)
+			select_card.emit(self)
 		elif event.button_index == 1 and not event.is_pressed():
 			print(\"unclicked\")
 "
@@ -328,7 +331,7 @@ script = SubResource("GDScript_1fx5e")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(13, 3)
 sprite_frames = SubResource("SpriteFrames_c8te1")
-animation = &"q_spades"
+animation = &"q_diamonds"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(13.5, 2.5)

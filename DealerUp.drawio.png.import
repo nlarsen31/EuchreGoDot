@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://liq6ndo7h304"
-path="res://.godot/imported/DealerUp.drawio.png-94c1d828cc75484135e7a734320f591c.ctex"
+uid="uid://65rqnt0hy5aw"
+path="res://.godot/imported/DealerUp.drawio.png-5f2ea186b8d2cae6b05cd637b3205793.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://CardImages/DealerUp.drawio.png"
-dest_files=["res://.godot/imported/DealerUp.drawio.png-94c1d828cc75484135e7a734320f591c.ctex"]
+source_file="res://DealerUp.drawio.png"
+dest_files=["res://.godot/imported/DealerUp.drawio.png-5f2ea186b8d2cae6b05cd637b3205793.ctex"]
 
 [params]
 

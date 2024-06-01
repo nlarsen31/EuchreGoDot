@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cjfm0akq2y5g7"
-path="res://.godot/imported/DealerDown.drawio.png-0433004705bc35c27ac2764702210cd2.ctex"
+uid="uid://23nsod7q01b1"
+path="res://.godot/imported/k_hearts.png-891c94668a05d120866e92bece7e633c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://CardImages/DealerDown.drawio.png"
-dest_files=["res://.godot/imported/DealerDown.drawio.png-0433004705bc35c27ac2764702210cd2.ctex"]
+source_file="res://CardImages2/k_hearts.png"
+dest_files=["res://.godot/imported/k_hearts.png-891c94668a05d120866e92bece7e633c.ctex"]
 
 [params]
 

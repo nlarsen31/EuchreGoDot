@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://d325sxd7qsoyt"]
+
+[ext_resource type="Script" path="res://playing_better.gd" id="1_br0wh"]
+[ext_resource type="PackedScene" uid="uid://c6jjwbvxya6kn" path="res://card_container.tscn" id="2_fyyye"]
+[ext_resource type="Texture2D" uid="uid://dqr4i0fxmvk35" path="res://CardImages/bgTableTwo.png" id="2_xag30"]
+
+[node name="PlayingBetter" type="Node2D"]
+script = ExtResource("1_br0wh")
+card_scene = ExtResource("2_fyyye")
+
+[node name="ParallaxBackground" type="ParallaxBackground" parent="."]
+
+[node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxBackground"]
+
+[node name="BgTableTwo" type="Sprite2D" parent="."]
+position = Vector2(599, 329)
+scale = Vector2(1.27637, 1)
+texture = ExtResource("2_xag30")
+metadata/_edit_lock_ = true

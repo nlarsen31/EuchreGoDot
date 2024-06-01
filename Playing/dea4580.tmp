@@ -1,9 +1,9 @@
 [gd_scene load_steps=7 format=3 uid="uid://xbr48vwxhoga"]
 
+[ext_resource type="Texture2D" uid="uid://cjfm0akq2y5g7" path="res://CardImages/DealerDown.drawio.png" id="1_3mo15"]
 [ext_resource type="Script" path="res://Playing/dealerIndicator.gd" id="1_xv5p0"]
-[ext_resource type="Texture2D" uid="uid://cjfm0akq2y5g7" path="res://OtherSprites/DealerDown.drawio.png" id="2_cno1o"]
-[ext_resource type="Texture2D" uid="uid://coue2iqm683db" path="res://OtherSprites/DealerRight.drawio.png" id="3_uymso"]
-[ext_resource type="Texture2D" uid="uid://bb5hpkeigcu37" path="res://OtherSprites/DealerLeft.drawio.png" id="4_arc3v"]
+[ext_resource type="Texture2D" uid="uid://coue2iqm683db" path="res://CardImages/DealerRight.drawio.png" id="2_jutc4"]
+[ext_resource type="Texture2D" uid="uid://bb5hpkeigcu37" path="res://CardImages/DealerLeft.drawio.png" id="3_5val8"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_gq7rb"]
 load_path = "res://.godot/imported/DealerUp.drawio.png-94c1d828cc75484135e7a734320f591c.ctex"
@@ -12,7 +12,7 @@ load_path = "res://.godot/imported/DealerUp.drawio.png-94c1d828cc75484135e7a7343
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("2_cno1o")
+"texture": ExtResource("1_3mo15")
 }],
 "loop": true,
 "name": &"down",
@@ -20,7 +20,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("3_uymso")
+"texture": ExtResource("2_jutc4")
 }],
 "loop": true,
 "name": &"left",
@@ -28,7 +28,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("4_arc3v")
+"texture": ExtResource("3_5val8")
 }],
 "loop": true,
 "name": &"right",
