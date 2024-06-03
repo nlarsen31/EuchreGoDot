@@ -1,7 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://c61e0lq7rt214"]
+[gd_scene load_steps=2 format=3 uid="uid://c61e0lq7rt214"]
 
 [ext_resource type="Script" path="res://MakeTrumpPhase1.gd" id="1_oeyk5"]
-[ext_resource type="PackedScene" uid="uid://xbr48vwxhoga" path="res://Playing/dealerIndicator.tscn" id="2_fv6wg"]
 
 [node name="MakeTrumpPhase1" type="Control"]
 layout_mode = 3
@@ -28,9 +27,6 @@ offset_right = 84.0
 offset_bottom = 49.0
 text = "Pass
 "
-
-[node name="DealerIndicator" parent="." instance=ExtResource("2_fv6wg")]
-position = Vector2(-1, 8)
 
 [connection signal="pressed" from="Order UP" to="." method="_on_order_up_pressed"]
 [connection signal="pressed" from="Pass" to="." method="_on_pass_pressed"]

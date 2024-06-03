@@ -9,7 +9,7 @@ const TrumpRankings = preload("res://CommonScripts/TrumpRanking.gd")
 # State Properties
 var _active_player = -1
 var _player_called = -1
-var _dealer = Enums.PLAYERS.Left
+var _dealer = Enums.PLAYERS.Right
 var _lead_player = -1
 var _played_cards = [null, null, null, null]
 var _played_card_count = 0
@@ -27,6 +27,11 @@ var _trump = -1
 # Common Util functions
 func _hand_eval():
 	print("hand_eval")
+	for i in range(4):
+		var str = ""
+		if _lead_player == i:
+			str = "****"
+		print(Enums.Players_toString[i] + str(_played_cards[i]) + str)
 
 func _next_player(player):
 	return (player + 1) % 4
@@ -42,6 +47,53 @@ func _connect_player_hand_play(connect_str, play_or_discard, connect = true):
 func _remove_bid_ui():
 	$MakeTrumpPhase1.visible = false
 	$MakeTrumpPhase2.visible = false
+
+func _place_made_it_chip(player, suit):
+	print("_place_made_it_chip")
+	$DealerChipMadeIt.visible = true
+	$DealerChipMadeIt.position = PlayerPositions.MADE_IT_CHIP_POSITIONS[player][0]
+	$DealerChipMadeIt.rotation = PlayerPositions.MADE_IT_CHIP_POSITIONS[player][1]
+	$DealerChipMadeIt.set_sprite_suit(_trump)
+
+# Hand evaluation methods:
+
+# return true if card1 wins, false if card2 wins
+func _compare_two_cards(card1, card2):
+	var leading_suit = _played_cards[_lead_player].suit
+	print("comparing " + card1.toString() + " " + card2.toString())
+	print("Trump: " + Enums.TO_STR_SUITS[_trump] + 
+		" Leading Player: " + Enums.Players_toString[_lead_player] +
+		" Leading Suit: " + Enums.TO_STR_SUITS[leading_suit])
+	if _get_suit(_trump, card1) == _trump and _get_suit(_trump, card2) != _trump:
+		return true
+	elif  _get_suit(_trump, card1) != _trump and _get_suit(_trump, card2) == _trump:
+		return false
+	elif _get_suit(_trump, card1) == _trump and _get_suit(_trump, card2) == _trump:
+		var idx1 = TrumpRankings.ALL_RANKINGS[_trump].find(card1.toString())
+		var idx2 = TrumpRankings.ALL_RANKINGS[_trump].find(card2.toString())
+		if idx1 > idx2:
+			return true
+		return false
+	elif _get_suit(_trump, card1) != _trump and _get_suit(_trump, card2) != _trump:
+		if card1.rank > card2.rank:
+			return true
+		return false
+	return
+	
+# _get_suit takes into account jacks changing.
+func _get_suit(CurrentTrump, card):
+	if card.rank != Enums.Ranks.JACK:
+		return card.suit
+	elif _trump == Enums.Suits.SPADES and card.suit == Enums.Suits.CLUBS:
+		return Enums.Suits.SPADES
+	elif _trump == Enums.Suits.CLUBS and card.suit == Enums.Suits.SPADES:
+		return Enums.Suits.CLUBS
+	elif _trump == Enums.Suits.HEARTS and card.suit == Enums.Suits.DIAMONDS:
+		return Enums.Suits.HEARTS
+	elif _trump == Enums.Suits.DIAMONDS and card.suit == Enums.Suits.HEARTS:
+		return Enums.Suits.DIAMONDS
+	else:
+		return card.suit
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -130,8 +182,10 @@ func deal():
 	if _active_player != Enums.PLAYERS.Player:
 		$MakeTrumpPhase1/Pass.visible = false
 		$"MakeTrumpPhase1/Order UP".visible = false
-	$MakeTrumpPhase1.set_dealer(_dealer)
-	$MakeTrumpPhase2.set_dealer(_dealer)
+	# Set dealer token
+	$DealerChipDealer.set_sprite("dealer")
+	$DealerChipDealer.position = PlayerPositions.DEALER_CHIP_POSITIONS[_dealer][0]
+	$DealerChipDealer.rotation = PlayerPositions.DEALER_CHIP_POSITIONS[_dealer][1]
 	$Timer.start()
 
 func _player_pass():
@@ -178,11 +232,13 @@ func _cpu_bid_up(force = false):
 		#$HintLabel.text = Enums.Players_toString[_active_player] + " made trump"
 		_player_called = _active_player
 		_game_phase = Enums.PHASES.PLAYING
+		_trump = _deck[23].suit
 		_remove_bid_ui()
 		_cpu_discard(_active_player)
 		_active_player = _next_player(_dealer)
 		var hint_str = "%s made trump %s to lead" % [Enums.Players_toString[_player_called], Enums.Players_toString[_active_player]]
 		$HintLabel.text = hint_str
+		_place_made_it_chip(_player_called, _trump)
 
 func _cpu_bid_down(force = false):
 	print("_cpu_bid_down")
@@ -219,9 +275,12 @@ func _cpu_bid_down(force = false):
 		$HintLabel.text = "%s made trump: %s" % [Enums.Players_toString[_active_player], Enums.TO_STR_SUITS[_trump]]
 		$MakeTrumpPhase2.visible = false
 		_game_phase = Enums.PHASES.PLAYING
+		_player_called = _active_player
 		_active_player = _next_player(_dealer)
+		_place_made_it_chip(_player_called, _trump)
 		$Timer.start()
 
+# This gets called when any player "orders it up" in bid up phase
 func _cpu_discard(player):
 	print("_cpu_discard")
 	var randy = randi() % 5
@@ -253,6 +312,9 @@ func _cpu_play_card(index):
 			PlayerPositions.PLAYED_CARD_POSITIONS[_active_player][0],
 			PlayerPositions.PLAYED_CARD_POSITIONS[_active_player][1]
 		)
+	if _played_card_count == 0:
+		_lead_player = _active_player
+	_played_cards[_active_player] = card
 	_active_player = _next_player(_active_player)
 	_played_card_count += 1
 	if _played_card_count < 4:
@@ -302,8 +364,11 @@ func _on_make_trump_phase_1_order_up():
 	if _dealer == Enums.PLAYERS.Player:
 		$HintLabel.text = "Pick a card to discard"
 		_connect_player_hand_play("select_card", _select_card)
-	else: 
+	else:
+		_trump = _deck[23].suit
+		_player_called = _active_player
 		_cpu_discard(_dealer)
+		_place_made_it_chip(_player_called, _trump)
 
 func _on_make_trump_phase_1_pass():
 	_player_pass()
@@ -325,17 +390,21 @@ func _select_card(card):
 			PlayerPositions.PLAYED_CARD_POSITIONS[Enums.PLAYERS.Player][0],
 			PlayerPositions.PLAYED_CARD_POSITIONS[Enums.PLAYERS.Player][1]
 		)
+		if _played_card_count == 0:
+			_lead_player = _active_player
+		_played_cards[_active_player] = card
 		_played_card_count += 1
 		if _played_card_count < 4:
 			_active_player = _next_player(_active_player)
 			$Timer.start()
 		else:
 			_hand_eval()
-	
+
 func _player_make_trump(suit):
 	_trump = suit
 	$MakeTrumpPhase2.visible = false
 	_player_called = Enums.PLAYERS.Player
+	_place_made_it_chip(_player_called, _trump)
 	_active_player = _next_player(_dealer)
 	_game_phase = Enums.PHASES.PLAYING
 	$HintLabel.text = "Player made %s trump" % Enums.TO_STR_SUITS[_trump]

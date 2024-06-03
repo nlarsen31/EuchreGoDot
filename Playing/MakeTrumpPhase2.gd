@@ -12,9 +12,6 @@ const Enums = preload("res://CommonScripts/enums.gd")
 func _ready():
 	pass # Replace with function body.
 
-func set_dealer(dealer):
-	$DealerIndicator.set_dealer(dealer)
-
 func disable_suit(suit):
 	if suit == Enums.Suits.SPADES:
 		$Spades.disabled = true

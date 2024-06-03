@@ -1,7 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://1hxufhkkq5me"]
+[gd_scene load_steps=2 format=3 uid="uid://1hxufhkkq5me"]
 
 [ext_resource type="Script" path="res://Playing/MakeTrumpPhase2.gd" id="1_irue7"]
-[ext_resource type="PackedScene" uid="uid://xbr48vwxhoga" path="res://Playing/dealerIndicator.tscn" id="1_m5iam"]
 
 [node name="MakeTrumpPhase2" type="Control"]
 layout_mode = 3
@@ -11,9 +10,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_irue7")
-
-[node name="DealerIndicator" parent="." instance=ExtResource("1_m5iam")]
-position = Vector2(0, 41)
 
 [node name="Spades" type="Button" parent="."]
 layout_mode = 0

@@ -1,0 +1,98 @@
+[gd_scene load_steps=3 format=3 uid="uid://bt43uv5228l4v"]
+
+[ext_resource type="PackedScene" uid="uid://ckyi87r6802ke" path="res://dealer_chip.tscn" id="1_1cdrh"]
+[ext_resource type="PackedScene" uid="uid://c6jjwbvxya6kn" path="res://card_container.tscn" id="2_55fws"]
+
+[node name="Node2D" type="Node2D"]
+
+[node name="DealerChip" parent="." instance=ExtResource("1_1cdrh")]
+position = Vector2(36, 741)
+rotation = 1.5708
+
+[node name="DealerChip2" parent="." instance=ExtResource("1_1cdrh")]
+position = Vector2(429, 112)
+rotation = 3.14159
+
+[node name="card_container" parent="." instance=ExtResource("2_55fws")]
+position = Vector2(508, 826)
+
+[node name="card_container21" parent="." instance=ExtResource("2_55fws")]
+position = Vector2(700, 562)
+
+[node name="card_container23" parent="." instance=ExtResource("2_55fws")]
+position = Vector2(700, 338)
+
+[node name="card_container22" parent="." instance=ExtResource("2_55fws")]
+position = Vector2(588, 450)
+rotation = 1.5708
+
+[node name="card_container24" parent="." instance=ExtResource("2_55fws")]
+position = Vector2(812, 450)
+rotation = 1.5708
+
+[node name="card_container2" parent="." instance=ExtResource("2_55fws")]
+position = Vector2(614, 826)
+
+[node name="card_container3" parent="." instance=ExtResource("2_55fws")]
+position = Vector2(720, 826)
+
+[node name="card_container4" parent="." instance=ExtResource("2_55fws")]
+position = Vector2(826, 826)
+
+[node name="card_container5" parent="." instance=ExtResource("2_55fws")]
+position = Vector2(932, 826)
+
+[node name="card_container6" parent="." instance=ExtResource("2_55fws")]
+position = Vector2(74, 450)
+rotation = 1.5708
+
+[node name="card_container7" parent="." instance=ExtResource("2_55fws")]
+position = Vector2(74, 238)
+rotation = 1.5708
+
+[node name="card_container8" parent="." instance=ExtResource("2_55fws")]
+position = Vector2(74, 344)
+rotation = 1.5708
+
+[node name="card_container9" parent="." instance=ExtResource("2_55fws")]
+position = Vector2(74, 662)
+rotation = 1.5708
+
+[node name="card_container10" parent="." instance=ExtResource("2_55fws")]
+position = Vector2(74, 556)
+rotation = 1.5708
+
+[node name="card_container11" parent="." instance=ExtResource("2_55fws")]
+position = Vector2(508, 74)
+
+[node name="card_container12" parent="." instance=ExtResource("2_55fws")]
+position = Vector2(614, 74)
+
+[node name="card_container13" parent="." instance=ExtResource("2_55fws")]
+position = Vector2(720, 74)
+
+[node name="card_container14" parent="." instance=ExtResource("2_55fws")]
+position = Vector2(826, 74)
+
+[node name="card_container15" parent="." instance=ExtResource("2_55fws")]
+position = Vector2(932, 74)
+
+[node name="card_container16" parent="." instance=ExtResource("2_55fws")]
+position = Vector2(1326, 450)
+rotation = 1.5708
+
+[node name="card_container17" parent="." instance=ExtResource("2_55fws")]
+position = Vector2(1326, 238)
+rotation = 1.5708
+
+[node name="card_container18" parent="." instance=ExtResource("2_55fws")]
+position = Vector2(1326, 344)
+rotation = 1.5708
+
+[node name="card_container19" parent="." instance=ExtResource("2_55fws")]
+position = Vector2(1326, 662)
+rotation = 1.5708
+
+[node name="card_container20" parent="." instance=ExtResource("2_55fws")]
+position = Vector2(1326, 556)
+rotation = 1.5708

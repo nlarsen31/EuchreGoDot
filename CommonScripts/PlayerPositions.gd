@@ -1,48 +1,61 @@
 
 
 const PLAYED_CARD_POSITIONS = [
-	[700, 285, PI/2],#RIGHT
-	[565,179,0], #Partner
-	[466,283,PI/2],#LEFT
-	[569,411,0],#Player
+	[812, 450, -1*PI/2],#RIGHT
+	[700,338,PI], #Partner
+	[588,450,PI/2],#LEFT
+	[700,562,0],#Player
 ]
 
 
 const PLAYER_HAND_ROTATION = [ 
-	PI/2,
-	0.0,
+	-1*PI/2,
+	PI,
 	PI/2,
 	0.0,
 ]
 const PLAYER_HAND_POSITIONS = [
 	[#right
-		[1055, 165],
-		[1055, 260],
-		[1055, 354],
-		[1055, 448],
-		[1055, 542]
+		[1326, 238],
+		[1326, 344],
+		[1326, 450],
+		[1326, 556],
+		[1326, 662]
 	],
 	[#partner
-		[337, 84],
-		[432, 84],
-		[527, 84],
-		[623, 84],
-		[717, 84]
+		[508, 74],
+		[614, 74],
+		[720, 74],
+		[826, 74],
+		[932, 74]
 	],
 	[#left
-		[92, 165],
-		[92, 260],
-		[92, 354],
-		[92, 448],
-		[92, 542]
+		[86, 238],
+		[86, 344],
+		[86, 450],
+		[86, 556],
+		[86, 662]
 	],
 	[#player
-		[337, 562],
-		[432, 562],
-		[527, 562],
-		[623, 562],
-		[717, 562]
+		[508, 826],
+		[614, 826],
+		[720, 826],
+		[826, 826],
+		[932, 826]
 	]
 ]
 
-const KittyLocation = Vector2(557, 303)
+const KittyLocation = Vector2(700, 450)
+
+const DEALER_CHIP_POSITIONS = [
+	[Vector2(1288,159), -1*PI/2],#right,
+	[Vector2(429,112), PI],#Partner
+	[Vector2(112, 741), PI/2],#LEFT
+	[Vector2(1011, 788), 0.0]#Player
+]
+const MADE_IT_CHIP_POSITIONS = [
+	[Vector2(1364,159), -1*PI/2],#right,
+	[Vector2(429,36), PI],#Partner
+	[Vector2(36, 741), PI/2],#left
+	[Vector2(1011, 863), 0.0]#player
+]

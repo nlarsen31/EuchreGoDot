@@ -41,7 +41,7 @@ offset_right = 108.0
 offset_bottom = 863.0
 text = "Oppos Score:"
 
-[node name="OppoLabel2" type="Label" parent="."]
+[node name="TrickCount" type="Label" parent="."]
 offset_left = 7.0
 offset_top = 814.0
 offset_right = 109.0
