@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bbq1kg1wynyqk"
-path="res://.godot/imported/MadeItSpades.png-543a3d586ed5bb862af93b800f935587.ctex"
+uid="uid://ckh5dq6lweb4l"
+path="res://.godot/imported/MadeItDiamonds.png-c6fa5823ddab25d20c638bb5fa1d8613.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://OtherSprites/MadeItSpades.png"
-dest_files=["res://.godot/imported/MadeItSpades.png-543a3d586ed5bb862af93b800f935587.ctex"]
+source_file="res://Playing/MadeItDiamonds.png"
+dest_files=["res://.godot/imported/MadeItDiamonds.png-c6fa5823ddab25d20c638bb5fa1d8613.ctex"]
 
 [params]
 

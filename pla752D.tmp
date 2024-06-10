@@ -14,10 +14,6 @@ card_scene = ExtResource("2_fyyye")
 wait_time = 0.5
 one_shot = true
 
-[node name="TimerLong" type="Timer" parent="."]
-wait_time = 5.0
-one_shot = true
-
 [node name="MakeTrumpPhase1" parent="." instance=ExtResource("3_semkh")]
 offset_left = 706.0
 offset_top = 544.0
@@ -38,18 +34,6 @@ offset_right = 1223.0
 offset_bottom = 790.0
 text = "HINT LABEL"
 
-[node name="ResultLabel" type="Label" parent="."]
-visible = false
-offset_left = 450.0
-offset_top = 286.0
-offset_right = 1106.0
-offset_bottom = 559.0
-size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 50
-text = "HINT LABEL"
-horizontal_alignment = 1
-vertical_alignment = 1
-
 [node name="OppoLabel" type="Label" parent="."]
 offset_left = 6.0
 offset_top = 840.0
@@ -57,12 +41,12 @@ offset_right = 108.0
 offset_bottom = 863.0
 text = "Oppos Score:"
 
-[node name="TrickCount" type="Label" parent="."]
+[node name="OppoLabel2" type="Label" parent="."]
 offset_left = 7.0
 offset_top = 814.0
 offset_right = 109.0
 offset_bottom = 837.0
-text = "Tricks Won in Hand:"
+text = "Trick Count:"
 
 [node name="GoodGuyLabel" type="Label" parent="."]
 offset_left = 8.0
@@ -79,7 +63,6 @@ visible = false
 position = Vector2(546, 778)
 
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
-[connection signal="timeout" from="TimerLong" to="." method="_on_timer_timeout"]
 [connection signal="OrderUp" from="MakeTrumpPhase1" to="." method="_on_make_trump_phase_1_order_up"]
 [connection signal="Pass" from="MakeTrumpPhase1" to="." method="_on_make_trump_phase_1_pass"]
 [connection signal="clubs_signal" from="MakeTrumpPhase2" to="." method="_on_make_trump_phase_2_clubs_signal"]

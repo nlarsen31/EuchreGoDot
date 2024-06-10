@@ -9,7 +9,7 @@ const TrumpRankings = preload("res://CommonScripts/TrumpRanking.gd")
 # State Properties
 var _active_player = -1
 var _player_called = -1
-var _dealer = Enums.PLAYERS.Right
+var _dealer = Enums.PLAYERS.Player
 var _lead_player = -1
 var _played_cards = [null, null, null, null]
 var _played_card_count = 0
@@ -23,15 +23,89 @@ var _players_hands = [
 	[null, null, null, null, null]
 ]
 var _trump = -1
+var _tricks_won = 0
+var _good_guys_score = 0
+var _bad_guys_score = 0
 
 # Common Util functions
+func _remove_card_from_hand(card):
+	var hand_idx = _players_hands[_active_player].find(card)
+	_players_hands[_active_player][hand_idx] = null
+
+func _all_hands_null():
+	for i in range(5):
+		for player in range(4):
+			if _players_hands[player][i] != null:
+				return false
+	return true
+
 func _hand_eval():
-	print("hand_eval")
+	
+	var rank_dict: Dictionary = _get_ranking_dictionary(_trump, _played_cards[_lead_player].suit)
+	
+	# start with leading player, loop 4 times
+	var winning_player = _lead_player
+	var curr_player = _next_player(_lead_player)
+	for i in range(3):
+		var winning_player_card: StaticBody2D = _played_cards[winning_player]
+		var curr_player_card: StaticBody2D = _played_cards[curr_player]
+		if rank_dict.has(str(curr_player_card)):
+			if rank_dict[str(curr_player_card)] < rank_dict[str(winning_player_card)]:
+				winning_player = curr_player
+		curr_player = _next_player(curr_player)
+	print("winning: " + Enums.Players_toString[winning_player])
+	return winning_player
+
+func _print_players_hands():
+	for player_idx in range(4):
+		var hand = []
+		for j in range(5):
+			if _players_hands[player_idx][j] != null:
+				hand.append(_players_hands[player_idx][j])
+		var s = "%s ".repeat(len(hand))
+		var hand_str = s % hand
+		print("%s [%s]" % [Enums.Players_toString[player_idx], hand_str])
+
+func _print_played_cards():
+	var str = "%s %s\n".repeat(4)
+	var parms = []
 	for i in range(4):
-		var str = ""
-		if _lead_player == i:
-			str = "****"
-		print(Enums.Players_toString[i] + str(_played_cards[i]) + str)
+		parms.append(Enums.Players_toString[i])
+		parms.append(str(_played_cards[i]))
+	print(str % parms)
+# Returns a dictionary with the ranking of each card based trump and lead
+func _get_ranking_dictionary(trump, lead):
+	var dict = {}
+	var trump_rank = ["a", "k", "q", "10", "9"]
+	var normal_rank = ["a", "k", "q", "j", "10", "9"]
+	
+	# Add the jacks at 0 and 1
+	if trump == Enums.Suits.SPADES:
+		dict["j_spades"] = 0
+		dict["j_clubs"] = 1
+	elif trump == Enums.Suits.CLUBS:
+		dict["j_clubs"] = 0
+		dict["j_spades"] = 1
+	elif trump == Enums.Suits.HEARTS:
+		dict["j_hearts"] = 0
+		dict["j_diamonds"] = 1
+	elif trump == Enums.Suits.DIAMONDS:
+		dict["j_diamonds"] = 0
+		dict["j_hearts"] = 1
+	
+	# Add the rest of trump
+	var curr_value = 2
+	for rank in trump_rank:
+		dict[rank + "_" + Enums.TO_STR_SUITS[trump]] = curr_value
+		curr_value += 1
+	
+	# Add the rest of everything else:
+	for rank in normal_rank:
+		var key = rank + "_" + Enums.TO_STR_SUITS[lead]
+		if not dict.has(key): #Skip anything we have for the left
+			dict[key] = curr_value
+		curr_value += 1
+	return dict
 
 func _next_player(player):
 	return (player + 1) % 4
@@ -39,10 +113,11 @@ func _next_player(player):
 func _connect_player_hand_play(connect_str, play_or_discard, connect = true):
 	for i in range(5):
 		var player_card : StaticBody2D = _players_hands[Enums.PLAYERS.Player][i]
-		if connect:
-			player_card.connect(connect_str, play_or_discard)
-		else:
-			player_card.disconnect(connect_str, play_or_discard)
+		if player_card != null:
+			if connect:
+				player_card.connect(connect_str, play_or_discard)
+			else:
+				player_card.disconnect(connect_str, play_or_discard)
 
 func _remove_bid_ui():
 	$MakeTrumpPhase1.visible = false
@@ -117,12 +192,17 @@ func _build_deck():
 func _play_turn():
 	if not _dealt:
 		deal()
+	elif _played_card_count >= 4:
+		_print_played_cards()
+		_print_players_hands()
+		_clean_up_mark_points()
 	elif _active_player != Enums.PLAYERS.Player:
 		_cpu_turn()
 	elif _active_player == Enums.PLAYERS.Player:
 		_player_turn()
 
 func deal():
+	_deck.clear()
 	_build_deck()
 	_deck.shuffle()
 	# Positions 0, 5 Right
@@ -160,6 +240,7 @@ func deal():
 	# cards 20,21,22,23 are the kitty 23 is face up on top.
 	_deck[23].position = PlayerPositions.KittyLocation
 	_deck[23].visible = true
+	_deck[23].rotation = 0
 	_deck[23].flipUpCard()
 	_deck[23].printCard()
 	_deck[22].position = Vector2(1000,1000)
@@ -186,6 +267,8 @@ func deal():
 	$DealerChipDealer.set_sprite("dealer")
 	$DealerChipDealer.position = PlayerPositions.DEALER_CHIP_POSITIONS[_dealer][0]
 	$DealerChipDealer.rotation = PlayerPositions.DEALER_CHIP_POSITIONS[_dealer][1]
+	$DealerChipMadeIt.visible = false
+	$ResultLabel.visible = false
 	$Timer.start()
 
 func _player_pass():
@@ -206,16 +289,16 @@ func _player_pass():
 	elif _game_phase == Enums.PHASES.BID_DOWN:
 		$MakeTrumpPhase2.visible = false
 		
-	$Timer.start()
 	_active_player = _next_player(_active_player)
+	$Timer.start()
 	
 # CPU Functions
 func _cpu_turn():
 	print("_cpu_turn()")
 	if _game_phase == Enums.PHASES.BID_UP:
-		_cpu_bid_up()
+		_cpu_bid_up(true)
 	elif _game_phase == Enums.PHASES.BID_DOWN:
-		_cpu_bid_down()
+		_cpu_bid_down(true)
 	elif _game_phase == Enums.PHASES.PLAYING:
 		_cpu_play()
 
@@ -312,26 +395,25 @@ func _cpu_play_card(index):
 			PlayerPositions.PLAYED_CARD_POSITIONS[_active_player][0],
 			PlayerPositions.PLAYED_CARD_POSITIONS[_active_player][1]
 		)
+	_remove_card_from_hand(card)
 	if _played_card_count == 0:
 		_lead_player = _active_player
 	_played_cards[_active_player] = card
 	_active_player = _next_player(_active_player)
 	_played_card_count += 1
-	if _played_card_count < 4:
-		$Timer.start()
-	else:
-		_hand_eval()
+	$Timer.start()
 
 func _player_turn():
 	if _game_phase == Enums.PHASES.BID_UP:
 		_player_bid_up()
-	if _game_phase == Enums.PHASES.BID_DOWN:
+	elif _game_phase == Enums.PHASES.BID_DOWN:
 		_player_bid_down()
-	if _game_phase == Enums.PHASES.PLAYING:
+	elif _game_phase == Enums.PHASES.PLAYING:
 		_player_play_hand()
 
 func _player_bid_up():
 	$HintLabel.text = "Players turn to pass or order it up"
+	$MakeTrumpPhase1.visible = true
 	$MakeTrumpPhase1/Pass.visible = true
 	$"MakeTrumpPhase1/Order UP".visible = true
 
@@ -346,6 +428,9 @@ func _player_bid_down():
 		$MakeTrumpPhase2/Diamonds.visible = true
 	if _deck[23].suit != Enums.Suits.CLUBS:
 		$MakeTrumpPhase2/Clubs.visible = true
+	
+	$HintLabel.text = "Pick a suit to be trump"
+	$MakeTrumpPhase2.visible = true
 	
 func _player_play_hand():
 	print("_player_play_hand")
@@ -375,6 +460,9 @@ func _on_make_trump_phase_1_pass():
 	
 func _select_card(card):
 	if _game_phase == Enums.PHASES.BID_UP:
+		_trump = _deck[23].suit
+		_player_called = Enums.PLAYERS.Player
+		_place_made_it_chip(_player_called, _trump)
 		var idx = _players_hands[Enums.PLAYERS.Player].find(card)
 		_players_hands[Enums.PLAYERS.Player][idx].position = Vector2(1000,1000)
 		_players_hands[Enums.PLAYERS.Player][idx] = _deck[23]
@@ -390,15 +478,14 @@ func _select_card(card):
 			PlayerPositions.PLAYED_CARD_POSITIONS[Enums.PLAYERS.Player][0],
 			PlayerPositions.PLAYED_CARD_POSITIONS[Enums.PLAYERS.Player][1]
 		)
+		_remove_card_from_hand(card)
+		
 		if _played_card_count == 0:
 			_lead_player = _active_player
 		_played_cards[_active_player] = card
 		_played_card_count += 1
-		if _played_card_count < 4:
-			_active_player = _next_player(_active_player)
-			$Timer.start()
-		else:
-			_hand_eval()
+		_active_player = _next_player(_active_player)
+		$Timer.start()
 
 func _player_make_trump(suit):
 	_trump = suit
@@ -424,3 +511,72 @@ func _on_make_trump_phase_2_spades_signal():
 
 func _on_make_trump_phase_2_pass_signal():
 	_player_pass()
+
+func _clear_played_cards():
+	for card in _played_cards:
+		card.position = Vector2(1000,1000)
+	for i in range(len(_played_cards)):
+		_played_cards[i] = null
+
+func _clean_up_mark_points():
+	var winning_player = _hand_eval()
+	if winning_player in [Enums.PLAYERS.Partner, Enums.PLAYERS.Player]:
+		_tricks_won += 1
+		$TrickCount.text = "Tricks Won in Hand: %s" % str(_tricks_won)
+		
+	_clear_played_cards()
+	_active_player = winning_player
+	_played_card_count = 0
+	
+	if _all_hands_null():
+		_set_up_next_hand()
+	else:
+		$Timer.start()
+
+func _set_up_next_hand():
+	_dealt = false
+	var label_text = """%s made trump
+	and won %d tricks
+	%s gets %d points
+	"""
+	var winner = -1
+	var points = 0
+	
+	if _tricks_won >= 3:
+		winner = Enums.PLAYERS.Player
+	elif _player_called != Enums.PLAYERS.Partner and _player_called != Enums.PLAYERS.Player:
+		winner = _player_called
+	elif _player_called == Enums.PLAYERS.Player:
+		winner = Enums.PLAYERS.Right
+		
+	var good_guys = [Enums.PLAYERS.Player, Enums.PLAYERS.Partner]
+	var good_guys_made_it = _player_called in good_guys
+	if good_guys_made_it and _tricks_won == 5:
+		points = 2
+	elif not good_guys_made_it and _tricks_won == 5:
+		points = 2
+	elif good_guys_made_it and _tricks_won >= 3:
+		points = 1
+	elif not good_guys_made_it and _tricks_won >= 3:
+		points = 1
+	elif good_guys_made_it and _tricks_won <= 2:
+		points = 2 # Eurche
+	elif good_guys_made_it and _tricks_won <=2:
+		points = 2
+		
+	$ResultLabel.text = label_text % [
+		Enums.Players_toString[_player_called],
+		_tricks_won, 
+		Enums.Players_toString[winner], points
+	]
+	$ResultLabel.visible = true
+	if winner in good_guys:
+		_good_guys_score += points
+		$GoodGuyLabel.text = "Good guys Score: %d" % [_good_guys_score]
+	else:
+		_bad_guys_score += points
+		$OppoLabel.text = "Oppos Score %d" % [_bad_guys_score]
+	
+	_tricks_won = 0
+	_dealer = _next_player(_dealer)
+	$TimerLong.start()

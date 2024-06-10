@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bnha07yh8w78i"
-path="res://.godot/imported/MadeItClubs.png-da6aba81c27ad008a078903afe80210a.ctex"
+uid="uid://dt6dxivdgy8ce"
+path="res://.godot/imported/MadeItHearts.png-63521712da9176bad7ba55b3ab49735a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://OtherSprites/MadeItClubs.png"
-dest_files=["res://.godot/imported/MadeItClubs.png-da6aba81c27ad008a078903afe80210a.ctex"]
+source_file="res://Playing/MadeItHearts.png"
+dest_files=["res://.godot/imported/MadeItHearts.png-63521712da9176bad7ba55b3ab49735a.ctex"]
 
 [params]
 
