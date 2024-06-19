@@ -1,5 +1,9 @@
 extends Node2D
 
+# Random chances
+const PASS_UP_CHANCE = 5 # if 5, 1 in 6 chance to order up trump
+const PASS_DOWN_CHANCE = 10 # if 10, 1 in 11 chance to order up
+
 # External Scripts
 const Enums = preload("res://CommonScripts/enums.gd")
 const PlayerPositions = preload("res://CommonScripts/PlayerPositions.gd")
@@ -28,6 +32,9 @@ var _good_guys_score = 0
 var _bad_guys_score = 0
 
 # Common Util functions
+###############################################################################
+# This section if for functions that can be useful in different phases of the game
+###############################################################################
 func _remove_card_from_hand(card):
 	var hand_idx = _players_hands[_active_player].find(card)
 	_players_hands[_active_player][hand_idx] = null
@@ -110,8 +117,8 @@ func _get_ranking_dictionary(trump, lead):
 func _next_player(player):
 	return (player + 1) % 4
 	
-func _connect_player_hand_play(connect_str, play_or_discard, connect = true):
-	for i in range(5):
+func _connect_player_hand_play(connect_str, play_or_discard, connect = true, options=range(5)):
+	for i in options:
 		var player_card : StaticBody2D = _players_hands[Enums.PLAYERS.Player][i]
 		if player_card != null:
 			if connect:
@@ -130,7 +137,33 @@ func _place_made_it_chip(player, suit):
 	$DealerChipMadeIt.rotation = PlayerPositions.MADE_IT_CHIP_POSITIONS[player][1]
 	$DealerChipMadeIt.set_sprite_suit(_trump)
 
-# Hand evaluation methods:
+# Take what was lead, and what is in a hand, and return valid options
+# lead -> a suit 
+# hand -> an element of _player_hands, can contain nulls
+func _get_options(lead, hand):
+	var options_lead = []
+	var options_other = []
+	
+	for i in range(len(hand)):
+		if hand[i] == null:
+			continue
+		if _get_suit(_trump, hand[i]) == lead:
+			options_lead.append(i)
+		else:
+			options_other.append(i)
+	if len(options_lead) > 0:
+		return options_lead
+	return options_other
+
+func _move_up_all_options(options, displacement):
+	for i in len(_players_hands[Enums.PLAYERS.Player]):
+		var card = _players_hands[Enums.PLAYERS.Player][i]
+		if i in options:
+			card.position = Vector2(card.position[0], card.position[1] + displacement)
+
+###############################################################################
+# Hand evaluation methods
+###############################################################################
 
 # return true if card1 wins, false if card2 wins
 func _compare_two_cards(card1, card2):
@@ -170,13 +203,19 @@ func _get_suit(CurrentTrump, card):
 	else:
 		return card.suit
 
-# Called when the node enters the scene tree for the first time.
+###############################################################################
+# scene methods
+###############################################################################
 func _ready():
 	_active_player = _dealer
 	$MakeTrumpPhase1/Pass.visible = false
 	$"MakeTrumpPhase1/Order UP".visible = false
 	
 	_play_turn()
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta):
+	pass
 
 func _build_deck():
 	for i in range(6):
@@ -190,6 +229,11 @@ func _build_deck():
 			add_child(card)
 
 func _play_turn():
+	# TODO: this is not working right in some cases of player leading
+	if _played_card_count == 0 and _game_phase == Enums.PHASES.PLAYING:
+		_lead_player = _active_player
+		print(Enums.Players_toString[_lead_player] + " is leading")
+		
 	if not _dealt:
 		deal()
 	elif _played_card_count >= 4:
@@ -200,6 +244,16 @@ func _play_turn():
 		_cpu_turn()
 	elif _active_player == Enums.PLAYERS.Player:
 		_player_turn()
+
+func _reset_player_hand():
+	for i in len(_players_hands[Enums.PLAYERS.Player]):
+		var card = _players_hands[Enums.PLAYERS.Player][i]
+		if card == null:
+			continue
+		card.position = Vector2(PlayerPositions.PLAYER_HAND_POSITIONS[Enums.PLAYERS.Player][i][0],
+			PlayerPositions.PLAYER_HAND_POSITIONS[Enums.PLAYERS.Player][i][1])
+		card.rotation = PlayerPositions.PLAYER_HAND_ROTATION[Enums.PLAYERS.Player]
+	
 
 func deal():
 	_deck.clear()
@@ -212,6 +266,7 @@ func deal():
 		_deck[i].rotation = PlayerPositions.PLAYER_HAND_ROTATION[0]
 		_deck[i].visible = true
 		_players_hands[Enums.PLAYERS.Right][i] = _deck[i]
+		_deck[i].flipDownCard()
 		
 	# Positions 5, 10 Partner
 	for i in range(0, 5):
@@ -220,6 +275,7 @@ func deal():
 		_deck[i+5].rotation = PlayerPositions.PLAYER_HAND_ROTATION[1]
 		_deck[i+5].visible = true
 		_players_hands[Enums.PLAYERS.Partner][i] = _deck[i+5]
+		_deck[i+5].flipDownCard()
 	
 	# Positions 10, 15 Left
 	for i in range(0, 5):
@@ -228,6 +284,7 @@ func deal():
 		_deck[i+10].rotation = PlayerPositions.PLAYER_HAND_ROTATION[2]
 		_deck[i+10].visible = true
 		_players_hands[Enums.PLAYERS.Left][i] = _deck[i+10]
+		_deck[i+10].flipDownCard()
 		
 	# Positions 15, 20 player
 	for i in range(0, 5):
@@ -296,15 +353,17 @@ func _player_pass():
 func _cpu_turn():
 	print("_cpu_turn()")
 	if _game_phase == Enums.PHASES.BID_UP:
-		_cpu_bid_up(true)
+		_cpu_bid_up()
 	elif _game_phase == Enums.PHASES.BID_DOWN:
-		_cpu_bid_down(true)
+		_cpu_bid_down()
 	elif _game_phase == Enums.PHASES.PLAYING:
 		_cpu_play()
 
 func _cpu_bid_up(force = false):
 	print("_cpu_bid_up()")
-	var options = [Enums.BID_UP_OPTIONS.PICK_IT_UP, Enums.BID_UP_OPTIONS.PASS]
+	var options = [Enums.BID_UP_OPTIONS.PICK_IT_UP]
+	for i in range(PASS_UP_CHANCE):
+		options.append(Enums.BID_UP_OPTIONS.PASS)
 	var choice = options.pick_random()
 	if force:
 		choice = Enums.BID_UP_OPTIONS.PASS
@@ -312,7 +371,6 @@ func _cpu_bid_up(force = false):
 	if choice == Enums.BID_UP_OPTIONS.PASS:
 		_player_pass()
 	elif  choice == Enums.BID_UP_OPTIONS.PICK_IT_UP:
-		#$HintLabel.text = Enums.Players_toString[_active_player] + " made trump"
 		_player_called = _active_player
 		_game_phase = Enums.PHASES.PLAYING
 		_trump = _deck[23].suit
@@ -336,8 +394,8 @@ func _cpu_bid_down(force = false):
 		options.append(Enums.BID_DOWN_OPTIONS.DIAMONDS)
 	
 	if _active_player != _dealer:
-		options.append(Enums.BID_DOWN_OPTIONS.PASS)
-		
+		for i in range(PASS_DOWN_CHANCE):
+			options.append(Enums.BID_DOWN_OPTIONS.PASS)
 	
 	var choice = options.pick_random()
 	if force and _active_player != _dealer:
@@ -381,10 +439,10 @@ func _cpu_discard(player):
 	$Timer.start()
 
 func _cpu_play():
-	var options = []
-	for i in range(5):
-		if _players_hands[_active_player][i] != null:
-			options.append(i)
+	var lead = -1
+	if _played_card_count > 0:
+		lead = _get_suit(_trump, _played_cards[_lead_player])
+	var options = _get_options(lead, _players_hands[_active_player])
 	var choice = options.pick_random()
 	_cpu_play_card(choice)
 
@@ -396,8 +454,6 @@ func _cpu_play_card(index):
 			PlayerPositions.PLAYED_CARD_POSITIONS[_active_player][1]
 		)
 	_remove_card_from_hand(card)
-	if _played_card_count == 0:
-		_lead_player = _active_player
 	_played_cards[_active_player] = card
 	_active_player = _next_player(_active_player)
 	_played_card_count += 1
@@ -435,13 +491,17 @@ func _player_bid_down():
 func _player_play_hand():
 	print("_player_play_hand")
 	$HintLabel.text = "Players turn to play"
-	_connect_player_hand_play("select_card", _select_card)
+	var lead = -1
+	if _played_card_count > 0:
+		lead = _get_suit(_trump, _played_cards[_lead_player])
+	var options = _get_options(lead, _players_hands[Enums.PLAYERS.Player])
+	_connect_player_hand_play("select_card", _select_card, true, options)
+	_move_up_all_options(options, -20)
 	
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	pass
-
-# Callbacks
+	
+###############################################################################
+# Callbacks for objects in game
+###############################################################################
 func _on_timer_timeout():
 	_play_turn()
 
@@ -457,7 +517,7 @@ func _on_make_trump_phase_1_order_up():
 
 func _on_make_trump_phase_1_pass():
 	_player_pass()
-	
+
 func _select_card(card):
 	if _game_phase == Enums.PHASES.BID_UP:
 		_trump = _deck[23].suit
@@ -472,16 +532,16 @@ func _select_card(card):
 		_game_phase = Enums.PHASES.PLAYING
 		_remove_bid_ui()
 		_active_player = _next_player(_dealer)
+		_connect_player_hand_play("select_card", _select_card, false)
 		$Timer.start()
 	elif _game_phase == Enums.PHASES.PLAYING:
+		_reset_player_hand()
 		card.position = Vector2(
 			PlayerPositions.PLAYED_CARD_POSITIONS[Enums.PLAYERS.Player][0],
 			PlayerPositions.PLAYED_CARD_POSITIONS[Enums.PLAYERS.Player][1]
 		)
 		_remove_card_from_hand(card)
 		
-		if _played_card_count == 0:
-			_lead_player = _active_player
 		_played_cards[_active_player] = card
 		_played_card_count += 1
 		_active_player = _next_player(_active_player)
@@ -502,7 +562,7 @@ func _on_make_trump_phase_2_clubs_signal():
 
 func _on_make_trump_phase_2_diamonds_signal():
 	_player_make_trump(Enums.Suits.DIAMONDS)
-	
+
 func _on_make_trump_phase_2_hearts_signal():
 	_player_make_trump(Enums.Suits.HEARTS)
 
@@ -518,11 +578,14 @@ func _clear_played_cards():
 	for i in range(len(_played_cards)):
 		_played_cards[i] = null
 
+func _set_tricks_label():
+	$TrickCount.text = "Tricks Won in Hand: %s" % str(_tricks_won)
+
 func _clean_up_mark_points():
 	var winning_player = _hand_eval()
 	if winning_player in [Enums.PLAYERS.Partner, Enums.PLAYERS.Player]:
 		_tricks_won += 1
-		$TrickCount.text = "Tricks Won in Hand: %s" % str(_tricks_won)
+		_set_tricks_label()
 		
 	_clear_played_cards()
 	_active_player = winning_player
@@ -551,22 +614,28 @@ func _set_up_next_hand():
 		
 	var good_guys = [Enums.PLAYERS.Player, Enums.PLAYERS.Partner]
 	var good_guys_made_it = _player_called in good_guys
+	var bad_guys_tricks = 5 - _tricks_won
+	
 	if good_guys_made_it and _tricks_won == 5:
 		points = 2
-	elif not good_guys_made_it and _tricks_won == 5:
+	elif not good_guys_made_it and bad_guys_tricks == 5:
 		points = 2
-	elif good_guys_made_it and _tricks_won >= 3:
+	elif good_guys_made_it and _tricks_won in [3, 4]:
 		points = 1
-	elif not good_guys_made_it and _tricks_won >= 3:
+	elif not good_guys_made_it and bad_guys_tricks in [3,4]:
 		points = 1
-	elif good_guys_made_it and _tricks_won <= 2:
-		points = 2 # Eurche
-	elif good_guys_made_it and _tricks_won <=2:
+	elif good_guys_made_it and _tricks_won in [0, 1, 2]:
 		points = 2
-		
+	elif not good_guys_made_it and _tricks_won in [0, 1, 2]:
+		points = 2
+	
+	var tricks = _tricks_won
+	if winner not in [Enums.PLAYERS.Player, Enums.PLAYERS.Partner]:
+		tricks = bad_guys_tricks
+
 	$ResultLabel.text = label_text % [
 		Enums.Players_toString[_player_called],
-		_tricks_won, 
+		tricks, 
 		Enums.Players_toString[winner], points
 	]
 	$ResultLabel.visible = true
@@ -578,5 +647,7 @@ func _set_up_next_hand():
 		$OppoLabel.text = "Oppos Score %d" % [_bad_guys_score]
 	
 	_tricks_won = 0
+	_set_tricks_label()
+	
 	_dealer = _next_player(_dealer)
 	$TimerLong.start()

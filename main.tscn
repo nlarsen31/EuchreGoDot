@@ -13,15 +13,27 @@ card_scene = ExtResource("2_u4axa")
 [node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxBackground"]
 
 [node name="BgTableTwo" type="Sprite2D" parent="."]
-position = Vector2(599, 329)
-scale = Vector2(1.27637, 1)
+position = Vector2(700.251, 451.5)
+scale = Vector2(1.36768, 1.17318)
 texture = ExtResource("1_o3qed")
 
 [node name="play" type="Button" parent="BgTableTwo"]
-offset_left = -87.749
-offset_top = -153.0
-offset_right = 83.251
-offset_bottom = -89.0
+offset_left = -71.8377
+offset_top = -43.0455
+offset_right = 99.1623
+offset_bottom = 20.9545
+size_flags_horizontal = 6
+size_flags_vertical = 6
 text = "Play"
 
+[node name="playDebug" type="Button" parent="BgTableTwo"]
+offset_left = -65.2572
+offset_top = 66.0599
+offset_right = 105.743
+offset_bottom = 130.06
+size_flags_horizontal = 6
+size_flags_vertical = 6
+text = "Play (debug)"
+
 [connection signal="pressed" from="BgTableTwo/play" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="BgTableTwo/playDebug" to="." method="_on_play_debug_pressed"]

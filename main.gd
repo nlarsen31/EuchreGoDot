@@ -1,7 +1,7 @@
 extends Node
 
 @export var card_scene: PackedScene
-
+var _playing_scene = load("res://playing_better.tscn")
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	print("Enter _ready")
@@ -12,5 +12,11 @@ func _process(delta):
 
 
 func _on_play_pressed():
-	get_tree().change_scene_to_file("res://Playing/playing.tscn")
+	Global.debugging = false
+	get_tree().change_scene_to_file("res://playing_better.tscn")
 
+
+
+func _on_play_debug_pressed():
+	Global.debugging = true
+	get_tree().change_scene_to_file("res://playing_better.tscn")

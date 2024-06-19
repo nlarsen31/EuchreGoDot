@@ -16,8 +16,8 @@
 [ext_resource type="Texture2D" uid="uid://c8kkajs3l0mua" path="res://CardImagesBigger/a_diamonds.png" id="14_7njfu"]
 [ext_resource type="Texture2D" uid="uid://d2htwwio2g6ck" path="res://CardImagesBigger/a_hearts.png" id="15_buht7"]
 [ext_resource type="Texture2D" uid="uid://dv3yratwu823r" path="res://CardImagesBigger/a_spades.png" id="16_fkfp5"]
+[ext_resource type="Texture2D" uid="uid://csg343apldfyh" path="res://CardImagesBigger/CardBack.png" id="17_8b7kw"]
 [ext_resource type="Texture2D" uid="uid://bem77l8bja5h8" path="res://CardImagesBigger/j_clubs.png" id="18_c775e"]
-[ext_resource type="Texture2D" uid="uid://c73htlw84a4qt" path="res://CardImages/spr_card_back.png" id="18_unmhq"]
 [ext_resource type="Texture2D" uid="uid://dc441f26jrpll" path="res://CardImagesBigger/j_diamonds.png" id="19_861bh"]
 [ext_resource type="Texture2D" uid="uid://u2f0umdwoeq0" path="res://CardImagesBigger/j_hearts.png" id="20_j0xj4"]
 [ext_resource type="Texture2D" uid="uid://u2rgo8e06ohc" path="res://CardImagesBigger/j_spades.png" id="21_r8arp"]
@@ -215,7 +215,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("18_unmhq")
+"texture": ExtResource("17_8b7kw")
 }],
 "loop": true,
 "name": &"card_back",
@@ -329,7 +329,7 @@ script = SubResource("GDScript_1fx5e")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_c8te1")
-animation = &"q_spades"
+animation = &"card_back"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_8bws0")
