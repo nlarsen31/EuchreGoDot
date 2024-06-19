@@ -1,7 +1,7 @@
 extends Node2D
 
 # Random chances
-const PASS_UP_CHANCE = 0 # if 5, 1 in 6 chance to order up trump
+const PASS_UP_CHANCE = 5 # if 5, 1 in 6 chance to order up trump
 const PASS_DOWN_CHANCE = 10 # if 10, 1 in 11 chance to order up
 
 # External Scripts
@@ -13,7 +13,7 @@ const TrumpRankings = preload("res://CommonScripts/TrumpRanking.gd")
 # State Properties
 var _active_player = -1
 var _player_called = -1
-var _dealer = Enums.PLAYERS.Player
+var _dealer = Enums.PLAYERS.Left
 var _lead_player = -1
 var _played_cards = [null, null, null, null]
 var _played_card_count = 0
@@ -372,7 +372,6 @@ func _cpu_bid_up(force = false):
 		_player_pass()
 	elif  choice == Enums.BID_UP_OPTIONS.PICK_IT_UP:
 		_player_called = _active_player
-		_game_phase = Enums.PHASES.PLAYING
 		_trump = _deck[23].suit
 		_remove_bid_ui()
 		_active_player = _next_player(_dealer)
@@ -382,6 +381,7 @@ func _cpu_bid_up(force = false):
 		
 		if _dealer in [Enums.PLAYERS.Partner, Enums.PLAYERS.Right, Enums.PLAYERS.Left]:
 			_cpu_discard(_dealer)
+			_game_phase = Enums.PHASES.PLAYING
 		else:
 			$HintLabel.text += "\nPick a card to discard"
 			_connect_player_hand_play("select_card", _select_card)
