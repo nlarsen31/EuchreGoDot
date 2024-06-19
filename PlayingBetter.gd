@@ -1,7 +1,7 @@
 extends Node2D
 
 # Random chances
-const PASS_UP_CHANCE = 5 # if 5, 1 in 6 chance to order up trump
+const PASS_UP_CHANCE = 0 # if 5, 1 in 6 chance to order up trump
 const PASS_DOWN_CHANCE = 10 # if 10, 1 in 11 chance to order up
 
 # External Scripts
@@ -375,11 +375,16 @@ func _cpu_bid_up(force = false):
 		_game_phase = Enums.PHASES.PLAYING
 		_trump = _deck[23].suit
 		_remove_bid_ui()
-		_cpu_discard(_active_player)
 		_active_player = _next_player(_dealer)
 		var hint_str = "%s made trump %s to lead" % [Enums.Players_toString[_player_called], Enums.Players_toString[_active_player]]
 		$HintLabel.text = hint_str
 		_place_made_it_chip(_player_called, _trump)
+		
+		if _dealer in [Enums.PLAYERS.Partner, Enums.PLAYERS.Right, Enums.PLAYERS.Left]:
+			_cpu_discard(_dealer)
+		else:
+			$HintLabel.text += "\nPick a card to discard"
+			_connect_player_hand_play("select_card", _select_card)
 
 func _cpu_bid_down(force = false):
 	print("_cpu_bid_down")
@@ -448,6 +453,7 @@ func _cpu_play():
 
 func _cpu_play_card(index):
 	var card = _players_hands[_active_player][index]
+	card.flipUpCard()
 	if card != null:
 		card.position = Vector2(
 			PlayerPositions.PLAYED_CARD_POSITIONS[_active_player][0],
