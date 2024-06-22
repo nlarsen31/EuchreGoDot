@@ -551,6 +551,7 @@ func _select_card(card):
 		_played_cards[_active_player] = card
 		_played_card_count += 1
 		_active_player = _next_player(_active_player)
+		_connect_player_hand_play("select_card", _select_card, false)
 		$Timer.start()
 
 func _player_make_trump(suit):
